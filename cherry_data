@@ -1,5 +1,5 @@
 # #prototipi
-
+import time
 farmaci={
    'vivinC':{
    'pericolosità': 1,
@@ -21,14 +21,15 @@ farmaci={
    }
  }
 
-piano=[{'orario':'20', 'medicina':'vivinC'}, {'orario':'17', 'medicina':'aspirina'},{'orario':'17', 'medicina':'tachipirina'}]
-ritardi={'17':12,'20':15}
+piano=[{'orario':'20:30', 'medicina':'vivinC'}, {'orario':'17:00', 'medicina':'aspirina'},{'orario':'17:30', 'medicina':'tachipirina'}]
+ritardi={'17:00':12,'20:30':15,'17:30':5}
 # #funzioni che prende in input il piano e lo ordina per orario
 class dati(object):
     
     def init(self):
         pass
-
+    
+        
     def riordina(self, piano):
         ora=[]
         med=[]
@@ -45,7 +46,38 @@ class dati(object):
             med=[]
         
         return ora
+    #trova prima ora del pian disponibile per medicine da prendere nel momento in cui viene chiamata
+    def find_first(self, ora):
+        hour=int(time.strftime("%H"))
+        minute=int(time.strftime("%M"))
+        chiavi=[]
+        for key in ora.keys():
+            chiavi.append(key)
+        chiavi.sort()
+        for i in range (len(chiavi)):
+            chiavi1=chiavi[i].split(':')
+            if int(chiavi1[0])<=hour and int(chiavi1[1])<=minute:
+                pass
+            else:
+                break
+        return i,chiavi
     
+    #controlla se è ora
+    def is_now(self,prossima_ora): #prossima_ora è chiavi[i]
+        hour=int(time.strftime("%H"))
+        minute=int(time.strftime("%M"))
+        tmp=prossima_ora.split(":")
+        if int(tmp[0])==hour and int(tmp[1])==minute:
+            return True
+        else:
+            return False
+        #out boolean input è stringa        
+                
+                
+                
+                
+                
+                
 ##algoritmo: serie di soglie (bottone,pericolosità...) se sopra o sotto so quale allarme
 #attivare. In più valuto ritardo medio sulla fascia oraria (se mi scordo spesso in quell'ora 
 #notifica sempre più impellente). Per ogni fascia oraria mi calcolo uno score per ogni medicinale
@@ -78,3 +110,7 @@ if __name__=="__main__":
     d=dati()
     ora=d.riordina(piano)
     score=d.algoritmo(ora,farmaci,ritardi)
+    print(d.find_first(ora))
+
+     
+     
