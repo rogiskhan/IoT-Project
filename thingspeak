@@ -1,17 +1,23 @@
-#import paho.mqtt.publish as publish
-#import time
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Apr  4 15:40:27 2020
+
+@author: monal
+"""
+
+import paho.mqtt.publish as publish
+import time
 class Comunic_ThingSpeak:
 
-    def __init__(self, ritardo):
+    def __init__(self):
     ###   Start of user configuration   ###
-        self.ritardo = ritardo
         #  ThingSpeak Channel Settings
 
         # The ThingSpeak Channel ID
-        channelID = "1030386"
+        self.channelID = "1030386"
 
         # The Write API Key for the channel
-        apiKey = "G54YTEUG4KX0I8EW"
+        self.apiKey = "G54YTEUG4KX0I8EW"
 
         #  MQTT Connection Methods
 
@@ -31,28 +37,29 @@ class Comunic_ThingSpeak:
         ###   End of user configuration   ###
 
         # The Hostname of the ThinSpeak MQTT service
-        mqttHost = "mqtt.thingspeak.com"
+        self.mqttHost = "mqtt.thingspeak.com"
 
         # Set up the connection parameters based on the connection type
         if useUnsecuredTCP:
-            tTransport = "tcp"
-            tPort = 1883
-            tTLS = None
+            self.tTransport = "tcp"
+            self.tPort = 1883
+            self.tTLS = None
 
         if useUnsecuredWebsockets:
-            tTransport = "websockets"
-            tPort = 80
-            tTLS = None
+            self.tTransport = "websockets"
+            self.tPort = 80
+            self.tTLS = None
 
         if useSSLWebsockets:
             import ssl
 
-            tTransport = "websockets"
-            tTLS = {'ca_certs': "/etc/ssl/certs/ca-certificates.crt", 'tls_version': ssl.PROTOCOL_TLSv1}
-            tPort = 443
-
+            self.tTransport = "websockets"
+            self.tTLS = {'ca_certs': "/etc/ssl/certs/ca-certificates.crt", 'tls_version': ssl.PROTOCOL_TLSv1}
+            self.tPort = 443
+     
+    def send_ts(self,ritardo):
         # Create the topic string
-        topic = "channels/" + channelID + "/publish/" + apiKey
+        self.topic = "channels/" + channelID + "/publish/" + apiKey
 
         # invio a entrambi i canali il ritardo, uno dei due grafici mi farà
         # direttamente la media
@@ -64,8 +71,14 @@ class Comunic_ThingSpeak:
             time.sleep(20)
 
         except (KeyboardInterrupt):
-            break
+           
+            print("error")
 
         except:
             print("There was an error while publishing the data.")
             time.sleep(0.5)
+
+if __name__=="__main__":
+    c=Comunic_ThingSpeak()
+    c.send_ts("'17:00':20")
+    
