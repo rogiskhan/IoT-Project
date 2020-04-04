@@ -3,6 +3,7 @@ from notifier import *
 from Comunic_ThingSpeak import *
 from dati import *
 import time
+import json
 ##questo è il main
 #prima fase: si inizializza
 if __name__ == '__main__':
@@ -42,9 +43,17 @@ if __name__ == '__main__':
 	   }
 	 }
 	 #fingiamo che il piano è inserito
+	 #il piano va salvato sempre o almeno una volta al giorno in json. qua va controlatto se ce n'è uno salvato o meno. Eventualmente con la modifica si sovrascrive
+	if path.exists('piano.json')==True:
 
-	piano=[{'orario':'20:30', 'medicina':'vivinC'}, {'orario':'10:00', 'medicina':'aspirina'},{'orario':'16:30', 'medicina':'tachipirina'}, {'orario':'16:30', 'medicina':'aspirina'}]
-	piano=dati.riordina(piano)
+		with open('piano.json') as json_file:
+    		piano = json.load(json_file)
+	else:
+#qua metto l'integrazione con la pagina
+		piano=[{'orario':'20:30', 'medicina':'vivinC'}, {'orario':'10:00', 'medicina':'aspirina'},{'orario':'16:30', 'medicina':'tachipirina'}, {'orario':'16:30', 'medicina':'aspirina'}]
+		piano=dati.riordina(piano)
+
+		
 	index, chiavi=dati.find_first(piano)
 	d.print_med(chiavi[index], piano[chiavi[index]])
 	ritardi={}
@@ -60,8 +69,10 @@ if __name__ == '__main__':
 	while 1:
 		mid=dati.is_now('00:00')
 		if mid==True:# se è mezzanotte aggiorno i punteggi
-			score=dati.algoritmo(piano, farmaci, ritardi)
+			score=dati.algoritmo(piano, farmaci, ritardi) #qua per i ritardi vanno messi come media. Ogni volta aggiungo dei nuovi ritardi e divido per 2
 			f, crit=dati.switch(score, chiavi[index])
+			with open('piano.json', 'w') as outfile:
+    			json.dump(piano, outfile) #copia di backup una volta al giorno
 			#male che va aggiorna pure il piano
 		
 		now=dati.is_now(chiavi[index])
