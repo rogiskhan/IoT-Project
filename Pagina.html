@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html id = "Ciao">
+	<head>
+    <title> Prova </title>
+    <!-- nomi degli script collegati -->
+    <script type="text/javascript" src="js/Funzioni.js"></script>
+	</head>
+	<body>
+    <div id = "Tabella schedule">
+      <!--action = "http://localhost:8080/dati" method = "post"-->
+      <!--onsubmit = "DatiForm(); return false"-->
+      <!-- return false serve per fare in modo di non ricaricare la pagina dopo
+        aver fatto il submit -->
+		  <form name = "FormName" action = "http://192.168.1.180:8080/dati" method="post">
+  		  <table>
+          <!-- titoli colonne -->
+          <thead>
+            <tr>
+              <th> Orario: </th>
+              <th> Medicinali: </th>
+            </tr>
+          </thead>
+          <!-- contenuto colonne-->
+          <tbody  id = "tab">
+            <td> 
+              <input name = "Orario1" placeholder = "hh:mm">
+            </td>
+            <td> 
+              <input name = "Medicinali1" placeholder = "Medicinale/i">
+            </td>
+          </tbody>
+        </table>
+  		  <div>
+          <!-- bottone per spedire il form -->
+    		  <input type = "submit" value = "Submit">
+  		  </div>
+		  </form>
+		  <div>
+        <!-- bottone per aggiungere un altro campo orario e medicinale -->
+  			<button onclick = "addfieldFunction()"> Aggiungi orario </button>
+		  </div>
+      <div>
+        <!-- bottoni per aprire la pagina che visualizza la tabella e per modificarla --> 
+        <!--<button onclick = "Visualizza()"> Visualizza </button>
+        <button onclick = "Modifica()"> Modifica </button>-->
+      </div>
+    </div>
+	</body>
+</html>
