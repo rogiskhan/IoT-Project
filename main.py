@@ -4,6 +4,8 @@ from Comunic_ThingSpeak import *
 from dati import *
 import time
 import json
+import filecmp
+from os import path
 ##questo è il main
 #prima fase: si inizializza
 if __name__ == '__main__':
@@ -15,7 +17,6 @@ if __name__ == '__main__':
 	pinr=18
 	ping=17
 	pinb=27
-	print('in')
 	d.print_init()
 	no=notifier(pin, token, buzzer, pinr, ping, pinb)
 	c=Comunic_ThingSpeak()
@@ -44,14 +45,17 @@ if __name__ == '__main__':
 	 }
 	 #fingiamo che il piano è inserito
 	 #il piano va salvato sempre o almeno una volta al giorno in json. qua va controlatto se ce n'è uno salvato o meno. Eventualmente con la modifica si sovrascrive
-	if path.exists('piano.json')==True:
+	while path.exists('piano.json')==False:
+		pass
 
-		with open('piano.json') as json_file:
-    		piano = json.load(json_file)
-	else:
+	with open('piano.json') as json_file:
+		piano = json.load(json_file)
+	with open('piano1.json', 'w') as outfile:
+		json.dump(piano, outfile)
+
 #qua metto l'integrazione con la pagina
-		piano=[{'orario':'20:30', 'medicina':'vivinC'}, {'orario':'10:00', 'medicina':'aspirina'},{'orario':'16:30', 'medicina':'tachipirina'}, {'orario':'16:30', 'medicina':'aspirina'}]
-		piano=dati.riordina(piano)
+		#piano=[{'orario':'20:30', 'medicina':'vivinC'}, {'orario':'10:00', 'medicina':'aspirina'},{'orario':'16:30', 'medicina':'tachipirina'}, {'orario':'16:30', 'medicina':'aspirina'}]
+	piano=dati.riordina(piano)
 
 		
 	index, chiavi=dati.find_first(piano)
@@ -67,13 +71,35 @@ if __name__ == '__main__':
 	########main loop#########
 
 	while 1:
+		#routine di update del piano
+		if filecmp.cmp ('piano1.json', 'piano.json')==False:
+			with open('piano.json') as json_file:
+				piano = json.load(json_file)
+			piano=dati.riordina(piano)
+			index, chiavi=dati.find_first(piano)
+			d.print_med(chiavi[index], piano[chiavi[index]])
+			#aggiorno i ritardi
+			rita=[]
+			pian=[]
+			for i in piano.keys():
+				pian.append(i)
+			for j in ritardi.keys():
+				rita.append(j)
+			dele=list(set(rita) - set(pian))
+			add=list(set(pian) - set(rita))
+			for keys in dele:
+				del ritardi[keys]
+			for keys in add:
+				ritardi.update({keys:0})
+			score=dati.algoritmo(piano, farmaci, ritardi)
+			f, crit=dati.switch(score, chiavi[index])
+
 		mid=dati.is_now('00:00')
 		if mid==True:# se è mezzanotte aggiorno i punteggi
 			score=dati.algoritmo(piano, farmaci, ritardi) #qua per i ritardi vanno messi come media. Ogni volta aggiungo dei nuovi ritardi e divido per 2
 			f, crit=dati.switch(score, chiavi[index])
-			with open('piano.json', 'w') as outfile:
-    			json.dump(piano, outfile) #copia di backup una volta al giorno
-			#male che va aggiorna pure il piano
+			
+			
 		
 		now=dati.is_now(chiavi[index])
 		if now==True: #controllo se è l'ora
