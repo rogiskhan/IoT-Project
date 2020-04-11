@@ -1,0 +1,1 @@
+{"clientID": "Device", "broker": "localhost", "topic_ritardi": "nomeutente/ritardi", "topic_prossimo_orario": "nomeutente/prox", "topic_notifica": "nomeutente/notific", "pin_button": 22, "pin_buzzer": 23, "pin_red": 18, "pin_green": 17, "pin_blue": 27, "token": "495943086:AAFzwh0IU9bmKXNL4cAoPa2he7BmLuLhPhU"}
