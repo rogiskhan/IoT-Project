@@ -9,7 +9,9 @@ import json
 class ServerMQTT(MyMQTT):
 	def __init__(self, clientID, broker):
 		MyMQTT.__init__(self, clientID, broker)
-		self.c=Comunic_ThingSpeak() #istanzio l'oggetto thingspeak
+
+		
+		self.c=Comunic_ThingSpeak(channelID, apiKey) #istanzio l'oggetto thingspeak
 		#istanzio le variabili di cui ho bisogno qua. Nel main verranno comunque richiamate
 		self.piano={} #qui si mette il piano
 		self.index=0 #l'indice che mi dice a quale punto sono arrivato
