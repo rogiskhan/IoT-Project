@@ -22,6 +22,7 @@ if __name__ == '__main__':
 	
 	
 	#controllo se esiste già un backup del piano. In caso di problemi al server appena ritorna online sa già cosa deve fare
+	#il backup viene creato alla mezzanotte del giorno stesso
 	if path.exists('piano.json')==False:
 		while mqtt.piano=={}:
 			
@@ -31,6 +32,7 @@ if __name__ == '__main__':
 			mqtt.piano = json.load(json_file)
 
 	#seleziono il prossimo appuntamento
+	#chiavi e index servono per specificare l'ora del prossimo alert e sono ottenute in output da find_first
 	mqtt.index, mqtt.chiavi=dati.find_first(mqtt.piano)
 	
 	
@@ -55,7 +57,7 @@ if __name__ == '__main__':
 			#aggiorno il prossimo step e lo invio
 			mqtt.index, mqtt.chiavi=dati.find_first(mqtt.piano)
 			mqtt.myPublish('nomeutente/prox', json.dumps({'medicine': mqtt.piano[mqtt.chiavi[mqtt.index]], 'orario':mqtt.chiavi[mqtt.index]})) #da mandare per il display
-			#qua aggiorno i ritardi
+			#aggiorno i ritardi
 			mqtt.ritardi=dati.ritardi_update(mqtt.piano, mqtt.ritardi)
 			#aggiorno lo score
 			score=dati.algoritmo(mqtt.piano, farmaci, mqtt.ritardi)
