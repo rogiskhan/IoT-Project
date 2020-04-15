@@ -12,13 +12,20 @@ if __name__ == '__main__':
 	with open('farmaci.json') as json_file:
 			farmaci = json.load(json_file)
 	
-	clientID="Server"
-	broker='localhost'
+   	with open("log_server.json", "r") as f:
+        settings = json.load(f)
+
+    	clientID = settings["clientID"]
+   	broker = settings["broker"]
+    	topic1 = settings["topic_ritardi"]
+    	topic2 = settings["topic_prossimo_orario"]
+	topic3 = settings["topic_piano"]
+    	topic4 = settings["notifica"]
 	dati=dati()
 	mqtt=ServerMQTT(clientID, broker)
 	mqtt.start()
-	mqtt.mySubscribe('nomeutente/ritardi')
-	mqtt.mySubscribe('nomeutente/piano')
+	mqtt.mySubscribe(topic1)
+	mqtt.mySubscribe(topic3)
 	
 	
 	#controllo se esiste già un backup del piano. In caso di problemi al server appena ritorna online sa già cosa deve fare
@@ -35,7 +42,7 @@ if __name__ == '__main__':
 	
 	
 	#comunico subito le informazioni al display
-	mqtt.myPublish('nomeutente/prox', json.dumps({'medicine': mqtt.piano[mqtt.chiavi[mqtt.index]], 'orario':mqtt.chiavi[mqtt.index]})) #da mandare per il display
+	mqtt.myPublish(topic2, json.dumps({'medicine': mqtt.piano[mqtt.chiavi[mqtt.index]], 'orario':mqtt.chiavi[mqtt.index]})) #da mandare per il display
 	
 	
 	for ora in mqtt.piano.keys(): #creo un dizionari di ritardi a zero
@@ -54,7 +61,7 @@ if __name__ == '__main__':
 		if piano_backup!=mqtt.piano: #se il piano è cambiato
 			#aggiorno il prossimo step e lo invio
 			mqtt.index, mqtt.chiavi=dati.find_first(mqtt.piano)
-			mqtt.myPublish('nomeutente/prox', json.dumps({'medicine': mqtt.piano[mqtt.chiavi[mqtt.index]], 'orario':mqtt.chiavi[mqtt.index]})) #da mandare per il display
+			mqtt.myPublish(topic2, json.dumps({'medicine': mqtt.piano[mqtt.chiavi[mqtt.index]], 'orario':mqtt.chiavi[mqtt.index]})) #da mandare per il display
 			#qua aggiorno i ritardi
 			mqtt.ritardi=dati.ritardi_update(mqtt.piano, mqtt.ritardi)
 			#aggiorno lo score
@@ -90,7 +97,7 @@ if __name__ == '__main__':
 				mqtt.ritm=dati.ritmax(mqtt.chiavi[mqtt.index], mqtt.chiavi[mqtt.index+1])
 
 			#mando i dati e dormo per 1 minuto
-			mqtt.myPublish('nomeutente/notific', json.dumps({'messaggio': msg, 'frequenza':f, 'n_msg_critici':crit, 'ritardo_massimo':mqtt.ritm}))
+			mqtt.myPublish(topic4, json.dumps({'messaggio': msg, 'frequenza':f, 'n_msg_critici':crit, 'ritardo_massimo':mqtt.ritm}))
 			time.sleep(60)
 
 			
