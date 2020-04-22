@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html id = "Ciao">
+	<head>
+    <title> Inserimento schedule </title>
+    <script>
+      var Schedule = '{{Schedule}}';
+    </script>
+    <script type = "text/javascript" src = "js/Funzioni.js"></script>
+    <link rel = "stylesheet" href = "css/stile.css">
+	</head>
+	<body onload = "aggiungiOrario()">
+    <div id = "Tabella schedule">
+      <form id = "ProvaForm" name = "FormName" action = "{{ip}}" method = "post">
+  		  <table>
+          <thead>
+            <tr>
+              <th> </th>
+              <th> Orario: </th>
+              <th> </th>
+              <th> Medicinali: </th>
+            </tr>
+          </thead>
+          <tbody  id = "tab">
+          </tbody>
+        </table>
+		  </form>
+      <div>
+          <button type = "button" onclick = "aggiungiOrario()"> Aggiungi orario </button>
+        </div>
+        <div>
+          <button type = "button" onclick = "Submit()"> Submit </button>
+          <button type = "button" onclick = "Visualizza()"> Visualizza </button>
+          <button type = "button" onclick = "Modifica()"> Modifica </button>
+        </div>
+    </div>
+	</body>
+</html>

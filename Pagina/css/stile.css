@@ -1,0 +1,12 @@
+select {
+	width: 142px;
+    height: 22px;
+}
+button {
+	width: 142px;
+    height: 22px;
+}
+div {
+	padding-left: 2px;
+	padding-top: 4px;
+}
